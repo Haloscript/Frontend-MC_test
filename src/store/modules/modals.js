@@ -1,5 +1,7 @@
 const state = {
-  type: ""
+  type: "",
+  content: false,
+  editableData: null
 };
 const getters = {
   getBaseModal: state => name => state[name]

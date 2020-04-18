@@ -6,9 +6,9 @@ export const UserTable = {
   total_price: "Общая стоймость"
 };
 
-export const GoodTAble = [
-  { name: "N п/п" },
-  { name: "Название" },
-  { name: "Дата регистрации" },
-  { name: "Цена" }
-];
+export const GoodTable = {
+  id: "N п/п",
+  title: "Название",
+  registrationDate: "Дата регистрации",
+  price: "Цена"
+};

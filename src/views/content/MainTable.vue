@@ -51,11 +51,11 @@ export default {
     }
   },
   methods: {
-    ...mapActions(["getTenUsers"]),
-    ...mapMutations(["seBaseData", "setBaseModal"]),
+    ...mapActions(["getTenUsers", "getOneUser"]),
+    ...mapMutations(["setBaseData", "setBaseModal"]),
 
     openPersonModal(id) {
-      console.log(id);
+      this.getOneUser(id);
       this.showModal = "onePerson";
     },
     openDeleteModal(id) {

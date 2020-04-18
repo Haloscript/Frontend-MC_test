@@ -1,9 +1,11 @@
 import { MethodGet } from "./method-get";
 import { MethodPost } from "./method-post";
+import { MethodGetParams } from "./method-get-params";
 
 export default class Request {
   static methods = {
     get: new MethodGet(),
+    getParams: new MethodGetParams(),
     post: new MethodPost()
   };
   /**
