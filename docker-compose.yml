@@ -1,0 +1,20 @@
+version: "2"
+
+services:
+  nginx:
+    build:
+      context: ./
+      dockerfile: docker/nginx.docker
+    ports:
+      - "8081:80"
+    links:
+      - node
+  node:
+    build:
+      context: ./
+      dockerfile: docker/node.docker
+    volumes:
+    - ./:/var/www
+    tty: true
+    ports:
+    - "8080:8080"

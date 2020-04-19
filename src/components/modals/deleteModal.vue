@@ -13,7 +13,7 @@
           Отмена
         </button>
 
-        <button @click="$emit('close')" class="waves-effect red lighten-1 btn">
+        <button @click="deleteEvent" class="waves-effect red lighten-1 btn">
           Удалить
         </button>
       </div>
@@ -23,11 +23,26 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 import warning from "../../assets/images/warning";
 export default {
   name: "deleteModal",
   components: {
     warning
+  },
+  computed: {
+    ...mapGetters(["getBaseModal"]),
+    editableData: {
+      get() {
+        return this.getBaseModal("editableData");
+      }
+    }
+  },
+  methods: {
+    ...mapActions(["deleteSelectUserData"]),
+    deleteEvent() {
+      this.deleteSelectUserData();
+    }
   }
 };
 </script>

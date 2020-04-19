@@ -10,3 +10,12 @@
   display: block;
   opacity: 0.5;
 }
+
+.add-btn {
+  margin: 20px auto;
+  display: block;
+  & .material-icons {
+    width: 16px;
+    fill: white;
+  }
+}

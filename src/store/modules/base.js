@@ -7,11 +7,23 @@ const state = {
   userListData: null,
   page: 1,
   activeItems: [],
-  selectUserData: null
+  filter: "",
+  sortPrice: "asc",
+  sortCount: "asc",
+  sorted: "",
+  selectUserData: null,
+  createUserData: {
+    lastName: "",
+    firstName: "",
+    middleName: "",
+    position: "",
+    user_good: []
+  }
 };
 const getters = {
   getBaseData: state => name => state[name],
-  getSelectedData: state => name => state.selectUserData[name]
+  getSelectedData: state => name => state.selectUserData[name],
+  getCreateUserData: state => name => state.createUserData[name]
 };
 const mutations = {
   setBaseData(state, { type, data }) {
@@ -19,6 +31,9 @@ const mutations = {
   },
   setSelectedData(state, { type, data }) {
     state.selectUserData[type] = data;
+  },
+  setCreateUserData(state, { type, data }) {
+    state.createUserData[type] = data;
   }
 };
 const actions = {
@@ -26,11 +41,18 @@ const actions = {
    * Получение всех работников
    * @param state
    * @param commit
+   * @param startSort
    * @returns {Promise<unknown>}
    */
-  getTenUsers({ state, commit }) {
+  getTenUsers({ state, commit }, startSort = false) {
     return new Promise((resolve, reject) => {
-      USERSERVICE.getTenUsersData(state.page)
+      USERSERVICE.getTenUsersData(
+        state.page,
+        state.filter,
+        startSort ? state.sorted : "",
+        state.sortPrice,
+        state.sortCount
+      )
         .then(res => {
           commit("setBaseData", { type: "userListData", data: res });
           resolve();
@@ -53,21 +75,39 @@ const actions = {
         .catch(err => reject(err));
     });
   },
-  addDataOnGoodTable({ state, commit }, data) {
+  /**
+   * Добавление данных в таблицу мц пользователя вызов из модалки "addAndEditGoodModal"
+   * @param state
+   * @param commit
+   * @param getters
+   * @param {object} data
+   */
+  addDataOnGoodTable({ state, commit, getters }, data) {
+    const placeCall = getters.getBaseModal("placeCall");
+    const currentData = `${
+      placeCall === "createUserModal" ? "createUserData" : "selectUserData"
+    }`;
     const pushedData = {
-      // id: Math.floor(Math.random() * Math.floor(20)),
       title: data.goodName,
       price: Number(data.goodPrice),
       registrationDate: new Date(data.goodDate)
     };
-    const newGoodArray = state.selectUserData.user_good.concat(pushedData);
-    commit("setSelectedData", { type: "user_good", data: newGoodArray });
-    commit("setBaseModal", { type: "type", data: "onePerson" });
-    // GOODSERVICE.addGoodDataOnUser({
-    //   owner_id: state.selectUserData.id,
-    //   ...pushedData
-    // });
+    const newGoodArray = state[currentData].user_good.concat(pushedData);
+    if (placeCall === "createUserModal") {
+      commit("setCreateUserData", { type: "user_good", data: newGoodArray });
+      commit("setBaseModal", { type: "type", data: "addUser" });
+    } else {
+      commit("setSelectedData", { type: "user_good", data: newGoodArray });
+
+      commit("setBaseModal", { type: "type", data: "onePerson" });
+    }
   },
+  /**
+   * Редактирование данных мц по айдишнику, вызов из модалки "addAndEditGoodModal"
+   * @param state
+   * @param commit
+   * @param {object} data
+   */
   editDataOnGoodTable({ state, commit }, data) {
     const changeDataIndex = state.selectUserData.user_good.findIndex(
       good => good.id === data.good_id
@@ -81,43 +121,101 @@ const actions = {
     state.selectUserData.user_good.splice(changeDataIndex, 1, pushedData);
     commit("setBaseModal", { type: "type", data: "onePerson" });
   },
+  /**
+   * Удаление и отвязка мц от пользователя
+   * @param state
+   * @param {object} data
+   */
   deleteOneGoodOnState({ state }, data) {
     state.selectUserData.user_good.splice(data.index, 1);
     GOODSERVICE.deleteOneGoodData(data.id)
       .then(res => console.log(res))
       .catch(err => console.log(err));
   },
-  saveUserAllData({ state, commit }) {
+  /**
+   * Изминение или создание  пользовательских данных  и пуш их в таблицу
+   * @param state
+   * @param commit
+   * @param dispatch
+   * @param {string}type
+   * @returns {Promise<unknown>}
+   */
+  saveUserAllData({ state, commit, dispatch }, type = "edit") {
     return new Promise((resolve, reject) => {
-      USERSERVICE.updateUserAllData(state.selectUserData).then(res =>
-        console.log(res)
-      );
+      const currentData = `${
+        type === "create" ? "createUserData" : "selectUserData"
+      }`;
+      const currentMutation = `${
+        type === "create" ? "setCreateUserData" : "setSelectedData"
+      }`;
+
+      USERSERVICE.updateUserAllData(state[currentData])
+        .then(res => console.log(res))
+        .catch(err => reject(err));
       const changeDataIndex = state.userListData.users.findIndex(
-        user => user.id === state.selectUserData.id
+        user => user.id === state[currentData].id
       );
-      commit("setSelectedData", {
+
+      commit(currentMutation, {
         type: "good_count",
-        data: state.selectUserData.user_good.length
+        data: state[currentData].user_good.length
       });
-      commit("setSelectedData", {
+      commit(currentMutation, {
         type: "total_price",
-        data: state.selectUserData.user_good.reduce(
+        data: state[currentData].user_good.reduce(
           (prev, good) => prev + good.price,
           0
         )
       });
-      commit("setSelectedData", {
+      commit(currentMutation, {
         type: "fullName",
-        data: `${
-          state.selectUserData.lastName
-        }.${state.selectUserData.firstName.charAt(0)}${
-          state.selectUserData.middleName ? "." : ""
-        }${state.selectUserData.middleName.charAt(0)}`
+        data: `${state[currentData].lastName}.${state[
+          currentData
+        ].firstName.charAt(0)}${
+          state[currentData].middleName ? "." : ""
+        }${state[currentData].middleName.charAt(0)}`
       });
-      state.userListData.users.splice(changeDataIndex, 1, state.selectUserData);
+      if (type === "create") {
+        console.log("====", currentData);
+        state.userListData.users.concat(state[currentData]);
+        dispatch("clearState", type);
+        resolve();
+      }
+      state.userListData.users.splice(changeDataIndex, 1, state[currentData]);
+      dispatch("clearState", type);
       resolve();
-      reject();
     });
+  },
+  /**
+   * Удаление работника
+   * @param state
+   * @param getters
+   */
+  deleteSelectUserData({ state, getters, commit }) {
+    const data = getters.getBaseModal("editableData");
+    const userIndex = state.userListData.users.findIndex(
+      user => user.id === data.id
+    );
+    state.userListData.users.splice(userIndex, 1);
+    commit("setBaseModal", { type: "type", data: null });
+    USERSERVICE.deleteFullUserData(data.id)
+      .then(() => {})
+      .catch(() => {});
+  },
+  clearState({ state }, type) {
+    setTimeout(() => {
+      if (type === "create") {
+        state.createUserData = {
+          lastName: "",
+          firstName: "",
+          middleName: "",
+          position: "",
+          user_good: []
+        };
+        return;
+      }
+      state.selectUserData = null;
+    }, 1500);
   }
 };
 

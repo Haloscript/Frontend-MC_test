@@ -1,18 +1,21 @@
 <template>
   <div class="good-main-table">
-    <goodTableRow :thead="true" :tableElement="staticData" />
-    <goodTableRow
-      v-for="(good, index) in goodList"
-      :key="good.id"
-      :tableElement="good"
-      :indexItem="index"
-      @deleteItem="deleteRow"
-      @editGoodRow="editGoodRow"
-    />
-    <goodTableRowTotal :total_price="totalPriceCalc"></goodTableRowTotal>
+    <div v-if="showTable">
+      <goodTableRow :thead="true" :tableElement="staticData" />
+      <goodTableRow
+        v-for="(good, index) in goodList"
+        :key="good.id"
+        :tableElement="good"
+        :indexItem="index"
+        @deleteItem="deleteRow"
+        @editGoodRow="editGoodRow"
+      />
+      <goodTableRowTotal :total_price="totalPriceCalc" />
+    </div>
+
     <button
       @click="showModal = 'addGood'"
-      class="btn-floating btn-large waves-effect waves-light 9"
+      class="btn-floating btn-large waves-effect waves-light 9 add-btn"
     >
       <i class="material-icons"> <add /> </i>
     </button>
@@ -42,9 +45,11 @@ export default {
       staticData: GoodTable
     };
   },
-
   computed: {
     ...mapGetters(["getSelectedData", "getBaseModal"]),
+    showTable() {
+      return this.goodList && this.goodList.length > 0;
+    },
     totalPriceCalc() {
       console.log("GOOD", this.goodList);
       return this.goodList.reduce((prev, good) => prev + good.price, 0);
@@ -86,9 +91,5 @@ export default {
   width: 100%;
   margin: 0 auto;
   padding-top: 40px;
-  .material-icons {
-    width: 16px;
-    fill: white;
-  }
 }
 </style>
