@@ -1,24 +1,29 @@
 <template>
-  <div v-if="showContent" class="main-table">
-    <TableRow
-      :thead="true"
-      :tableElement="staticData"
-      @startingSort="sortingOnData"
-    />
-    <TableRow
-      v-for="(user, index) in userListData.users"
-      :tableElement="user"
-      :key="user.id"
-      :indexItem="index"
-      @getFullInfo="openPersonModal"
-      @getDelete="openDeleteModal"
-    />
-    <Paginate
-      :currentPage="userListData.this_page"
-      :pages="userListData.pages"
-      @changePage="nextPage"
-    />
-    <!--    @click="showModal = 'addGood'"-->
+  <div>
+    <div v-if="showContent" class="main-table">
+      <TableRow
+        :thead="true"
+        :tableElement="staticData"
+        @startingSort="sortingOnData"
+      />
+      <TableRow
+        v-for="(user, index) in userListData.users"
+        :tableElement="user"
+        :key="user.id"
+        :indexItem="index"
+        @getFullInfo="openPersonModal"
+        @getDelete="openDeleteModal"
+      />
+      <Paginate
+        :currentPage="userListData.this_page"
+        :pages="userListData.pages"
+        @changePage="nextPage"
+      />
+    </div>
+    <div v-else class="no-content">
+      <h4>К сожалению таблица пуста</h4>
+      <CirclePreloader class="_loader" />
+    </div>
     <button
       @click="showModal = 'addUser'"
       class="btn-floating btn-large waves-effect waves-light 9 add-btn"
@@ -36,9 +41,11 @@ import { mapGetters, mapActions, mapMutations } from "vuex";
 import MainModal from "../../components/modals";
 import add from "../../assets/images/add";
 import Paginate from "../../components/Paginate";
+import CirclePreloader from "../../components/circlePreloader";
 export default {
   name: "Table",
   components: {
+    CirclePreloader,
     Paginate,
     TableRow,
     MainModal,
@@ -101,7 +108,7 @@ export default {
         this.setBaseData({ type: "sorted", data: value });
       }
     },
-    editableData:{
+    editableData: {
       get() {
         return this.getBaseModal("editableData");
       },
@@ -141,5 +148,11 @@ export default {
   width: 800px;
   margin: 0 auto;
   padding-top: 40px;
+}
+.no-content {
+  display: flex;
+  & ._loader {
+    margin: 20px;
+  }
 }
 </style>
