@@ -6,16 +6,18 @@
         <h4>Подтвердите удаление</h4>
       </div>
       <div class="modal-footer">
-        <button
-          @click="$emit('close')"
-          class="waves-effect waves-light btn modal-close"
-        >
-          Отмена
-        </button>
-
-        <button @click="deleteEvent" class="waves-effect red lighten-1 btn">
-          Удалить
-        </button>
+        <CustomButton
+          class="modal-btn"
+          @buttonClickEvt="$emit('close')"
+          title="Отмена"
+          color="grey lighten-1"
+        />
+        <CustomButton
+          class="modal-btn"
+          @buttonClickEvt="deleteEvent"
+          title="Удалить"
+          color="red lighten-1"
+        />
       </div>
     </div>
     <div class="modal-overlay modal-background"></div>
@@ -25,9 +27,11 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import warning from "../../assets/images/warning";
+import CustomButton from "../form_elements/CustomButton";
 export default {
   name: "deleteModal",
   components: {
+    CustomButton,
     warning
   },
   computed: {

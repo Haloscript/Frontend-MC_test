@@ -24,12 +24,7 @@
       <h4>К сожалению таблица пуста</h4>
       <CirclePreloader class="_loader" />
     </div>
-    <button
-      @click="showModal = 'addUser'"
-      class="btn-floating btn-large waves-effect waves-light 9 add-btn"
-    >
-      <i class="material-icons"> <add /> </i>
-    </button>
+    <AddButton @addEvent="showModal = 'addUser'" />
     <MainModal />
   </div>
 </template>
@@ -39,9 +34,9 @@ import TableRow from "../../components/table/UserTableRow";
 import { UserTable } from "../../app/tableConfig";
 import { mapGetters, mapActions, mapMutations } from "vuex";
 import MainModal from "../../components/modals";
-import add from "../../assets/images/add";
 import Paginate from "../../components/Paginate";
 import CirclePreloader from "../../components/circlePreloader";
+import AddButton from "../../components/form_elements/CustomAddButton";
 export default {
   name: "Table",
   components: {
@@ -49,7 +44,7 @@ export default {
     Paginate,
     TableRow,
     MainModal,
-    add
+    AddButton
   },
   data() {
     return {

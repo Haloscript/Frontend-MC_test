@@ -23,15 +23,18 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button
-          @click="$emit('openPerson')"
-          class="waves-effect grey lighten-1 btn modal-close"
-        >
-          Отмена
-        </button>
-        <button @click="addOnTable()" class="waves-effect green lighten-1  btn">
-          Добавить
-        </button>
+        <CustomButton
+          class="modal-btn"
+          @buttonClickEvt="$emit('openPerson')"
+          title="Отмена"
+          color="grey lighten-1"
+        />
+        <CustomButton
+          class="modal-btn"
+          @buttonClickEvt="addOnTable()"
+          title="Добавить"
+          color="green lighten-1"
+        />
       </div>
     </div>
     <div class="modal-overlay modal-background"></div>
@@ -39,11 +42,12 @@
 </template>
 
 <script>
-import CustomInput from "../form_elements/customInput";
+import CustomInput from "../form_elements/CustomInput";
 import { mapActions, mapGetters, mapMutations } from "vuex";
+import CustomButton from "../form_elements/CustomButton";
 export default {
   name: "addGoodModal",
-  components: { CustomInput },
+  components: { CustomButton, CustomInput },
   data() {
     return {
       scopedData: {
@@ -115,7 +119,7 @@ export default {
   /*  }*/
   /*  & .modal-footer {*/
   /*    text-align: center;*/
-  & .btn {
+  & .modal-btn {
     margin: 6px 20px;
   }
   /*  }*/

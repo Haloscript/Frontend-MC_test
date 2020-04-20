@@ -12,28 +12,22 @@
       />
       <goodTableRowTotal :total_price="totalPriceCalc" />
     </div>
-
-    <button
-      @click="showModal = 'addGood'"
-      class="btn-floating btn-large waves-effect waves-light 9 add-btn"
-    >
-      <i class="material-icons"> <add /> </i>
-    </button>
+    <AddButton @addEvent="showModal = 'addGood'" />
   </div>
 </template>
 
 <script>
 import goodTableRow from "./goodTableRow";
 import goodTableRowTotal from "./goodTableRowTotal";
-import add from "../../assets/images/add";
 import { GoodTable } from "../../app/tableConfig";
 import { mapGetters, mapMutations, mapActions } from "vuex";
+import AddButton from "../form_elements/CustomAddButton";
 export default {
   name: "goodTable",
   components: {
+    AddButton,
     goodTableRow,
     goodTableRowTotal,
-    add
   },
   props: {
     goodList: {

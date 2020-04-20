@@ -18,15 +18,18 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button @click="$emit('close')" class="waves-effect grey lighten-1 btn">
-          Отмена
-        </button>
-        <button
-          @click="saveUserData()"
-          class="waves-effect green lighten-1 btn"
-        >
-          Сохранить
-        </button>
+        <CustomButton
+          class="modal-btn"
+          @buttonClickEvt="$emit('close')"
+          title="Отмена"
+          color="grey lighten-1"
+        />
+        <CustomButton
+          class="modal-btn"
+          @buttonClickEvt="saveUserData()"
+          title="Сохранить"
+          color="green lighten-1"
+        />
       </div>
     </div>
     <div class="modal-overlay modal-background"></div>
@@ -36,11 +39,13 @@
 <script>
 import Preloader from "../preloader";
 import { mapGetters, mapMutations, mapActions } from "vuex";
-import customInput from "../form_elements/customInput";
+import customInput from "../form_elements/CustomInput";
 import GoodTable from "../table/goodTable";
+import CustomButton from "../form_elements/CustomButton";
 export default {
   name: "editOnePersonalModal",
   components: {
+    CustomButton,
     GoodTable,
     Preloader,
     customInput
