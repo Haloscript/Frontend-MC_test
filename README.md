@@ -1,23 +1,23 @@
 # mc
 
-## Project setup
+## Project up
 ```
-npm install
+make up
+```
+
+### Project install dependency
+```
+make install
+```
+
+### Project install sass-loader
+```
+make sass
 ```
 
 ### Compiles and hot-reloads for development
 ```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
+make serve
 ```
 
 ### Customize configuration

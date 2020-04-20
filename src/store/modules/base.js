@@ -13,6 +13,7 @@ const state = {
   sorted: "",
   selectUserData: null,
   createUserData: {
+    id: "",
     lastName: "",
     firstName: "",
     middleName: "",
@@ -150,40 +151,46 @@ const actions = {
       }`;
 
       USERSERVICE.updateUserAllData(state[currentData])
-        .then(res => console.log(res))
+        .then(res => {
+          console.log(res);
+          const changeDataIndex = state.userListData.users.findIndex(
+            user => user.id === state[currentData].id
+          );
+          commit(currentMutation, {
+            type: "good_count",
+            data: state[currentData].user_good.length
+          });
+          commit(currentMutation, {
+            type: "total_price",
+            data: state[currentData].user_good.reduce(
+              (prev, good) => prev + good.price,
+              0
+            )
+          });
+          commit(currentMutation, {
+            type: "fullName",
+            data: `${state[currentData].lastName}.${state[
+              currentData
+            ].firstName.charAt(0)}${
+              state[currentData].middleName ? "." : ""
+            }${state[currentData].middleName.charAt(0)}`
+          });
+          if (type === "create") {
+            console.log("====", currentData);
+            commit("setCreateUserData", { type: "id", data: res.user_id });
+            state.userListData.users.concat(state[currentData]);
+            dispatch("clearState", type);
+            resolve();
+          }
+          state.userListData.users.splice(
+            changeDataIndex,
+            1,
+            state[currentData]
+          );
+          dispatch("clearState", type);
+          resolve();
+        })
         .catch(err => reject(err));
-      const changeDataIndex = state.userListData.users.findIndex(
-        user => user.id === state[currentData].id
-      );
-
-      commit(currentMutation, {
-        type: "good_count",
-        data: state[currentData].user_good.length
-      });
-      commit(currentMutation, {
-        type: "total_price",
-        data: state[currentData].user_good.reduce(
-          (prev, good) => prev + good.price,
-          0
-        )
-      });
-      commit(currentMutation, {
-        type: "fullName",
-        data: `${state[currentData].lastName}.${state[
-          currentData
-        ].firstName.charAt(0)}${
-          state[currentData].middleName ? "." : ""
-        }${state[currentData].middleName.charAt(0)}`
-      });
-      if (type === "create") {
-        console.log("====", currentData);
-        state.userListData.users.concat(state[currentData]);
-        dispatch("clearState", type);
-        resolve();
-      }
-      state.userListData.users.splice(changeDataIndex, 1, state[currentData]);
-      dispatch("clearState", type);
-      resolve();
     });
   },
   /**
