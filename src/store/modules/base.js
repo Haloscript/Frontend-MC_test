@@ -152,7 +152,6 @@ const actions = {
 
       USERSERVICE.updateUserAllData(state[currentData])
         .then(res => {
-          console.log(res);
           const changeDataIndex = state.userListData.users.findIndex(
             user => user.id === state[currentData].id
           );
@@ -176,7 +175,6 @@ const actions = {
             }${state[currentData].middleName.charAt(0)}`
           });
           if (type === "create") {
-            console.log("====", currentData);
             commit("setCreateUserData", { type: "id", data: res.user_id });
             state.userListData.users.concat(state[currentData]);
             dispatch("clearState", type);

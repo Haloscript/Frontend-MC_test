@@ -1,4 +1,12 @@
-# mc
+# mc-front
+## Project Install steps
+1. make up
+2. make install
+3. make sass
+4. make serve
+
+## Command description
+```
 
 ## Project up
 ```
